@@ -10,9 +10,8 @@ import { cookies } from "next/headers" // Import cookies
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Jewelry CRM - Professional Edition",
+  title: "ChorsuGold - Professional Jewelry",
   description: "Complete jewelry business management system",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
