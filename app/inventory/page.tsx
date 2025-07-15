@@ -32,10 +32,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Plus, Package, AlertTriangle, TrendingUp, Edit, Trash2 } from "lucide-react"
 import { useAppStore, type InventoryItem } from "@/lib/store"
 import { useToast } from "@/components/toast-provider"
+// Add useI18n hook and translate all inventory page content
+import { useI18n } from "@/lib/i18n"
 
 export default function InventoryPage() {
   const { state, dispatch } = useAppStore()
   const { addToast } = useToast()
+  const { t } = useI18n()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
@@ -227,7 +230,8 @@ export default function InventoryPage() {
     <SidebarProvider>
         <AppSidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <TopNav pageTitle="Inventory Management" />
+          {/* Update page title and all content with translations */}
+          <TopNav pageTitle={t("inventory.title")} />
           <main className="flex-1 overflow-auto px-4 py-4">
             {" "}
             {/* Changed p-4 to px-4 py-4 */}
@@ -235,7 +239,8 @@ export default function InventoryPage() {
             <div className="grid gap-4 md:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Items</CardTitle>
+                  {/* Update all card titles, buttons, and form elements */}
+                  <CardTitle className="text-sm font-medium">{t("inventory.totalItems")}</CardTitle>
                   <Package className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -246,7 +251,7 @@ export default function InventoryPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("inventory.totalValue")}</CardTitle>
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -257,7 +262,7 @@ export default function InventoryPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Low Stock Alerts</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("inventory.lowStockAlerts")}</CardTitle>
                   <AlertTriangle className="h-4 w-4 text-destructive" />
                 </CardHeader>
                 <CardContent>
@@ -268,7 +273,7 @@ export default function InventoryPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Avg. Margin</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("inventory.avgMargin")}</CardTitle>
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -669,7 +674,6 @@ export default function InventoryPage() {
             </AlertDialog>
           </main>
         </div>
-     
     </SidebarProvider>
   )
 }

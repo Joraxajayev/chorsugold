@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarProvider } from "@/components/ui/sidebar" // Removed SidebarInset import
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { TopNav } from "@/components/top-nav"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,10 +35,13 @@ import { Search, Plus, Phone, Mail, Gift, Filter, Download, MoreHorizontal, Eye,
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAppStore, type Customer } from "@/lib/store"
 import { useToast } from "@/components/toast-provider"
+// Add useI18n hook and translate all customer page content
+import { useI18n } from "@/lib/i18n"
 
 export default function CustomersPage() {
   const { state, dispatch } = useAppStore()
   const { addToast } = useToast()
+  const { t } = useI18n()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -275,8 +278,8 @@ export default function CustomersPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Customers</h1>
-              <p className="text-muted-foreground">Manage your customer database and relationships</p>
+              <h1 className="text-3xl font-bold tracking-tight">{t("customers.title")}</h1>
+              <p className="text-muted-foreground">{t("customers.subtitle")}</p>
             </div>
             <div className="flex items-center gap-2">
               {selectedCustomers.length > 0 && (
@@ -293,18 +296,18 @@ export default function CustomersPage() {
                 <DialogTrigger asChild>
                   <Button onClick={resetForm}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Customer
+                    {t("customers.addCustomer")}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
-                    <DialogTitle>Add New Customer</DialogTitle>
+                    <DialogTitle>{t("customers.addNewCustomer")}</DialogTitle>
                     <DialogDescription>Enter customer details to add them to your database.</DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
                       <Label htmlFor="name">
-                        Full Name <span className="text-red-500">*</span>
+                        {t("customers.fullName")} <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         id="name"
@@ -390,7 +393,7 @@ export default function CustomersPage() {
           <div className="grid gap-4 md:grid-cols-4 mt-6">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("customers.totalCustomers")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{state.customers.length}</div>
@@ -399,7 +402,7 @@ export default function CustomersPage() {
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">VIP Customers</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("customers.vipCustomers")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{state.customers.filter((c) => c.status === "VIP").length}</div>
@@ -408,7 +411,7 @@ export default function CustomersPage() {
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Avg. Order Value</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("customers.avgOrderValue")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -428,7 +431,7 @@ export default function CustomersPage() {
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Lifetime Value</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("customers.lifetimeValue")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -443,7 +446,7 @@ export default function CustomersPage() {
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search customers..."
+                placeholder={t("customers.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"

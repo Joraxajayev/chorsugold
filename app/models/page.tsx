@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label"
 import { Printer } from "lucide-react"
 import { TopNav } from "@/components/top-nav"
+// Add useI18n hook and translate all models page content
+import { useI18n } from "@/lib/i18n"
 
 const jewelryModels = [
   {
@@ -44,6 +46,7 @@ const jewelryModels = [
 ]
 
 export default function JewelryModelsPage() {
+  const { t } = useI18n()
   const [searchCode, setSearchCode] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [newModel, setNewModel] = useState({
@@ -75,22 +78,22 @@ export default function JewelryModelsPage() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {" "}
         {/* Replaced SidebarInset with this div */}
-        <TopNav pageTitle="Umumiy baza (General Base)" />
+        <TopNav pageTitle={t("models.title")} />
         <main className="flex-1 flex flex-col gap-6 px-4 py-6">
           {" "}
           {/* Changed p-6 to px-4 py-6 and wrapped in main */}
           {/* Header Section */}
           <div className="text-center space-y-4">
-            <h2 className="text-2xl font-bold">Umumiy baza</h2>
+            <h2 className="text-2xl font-bold">{t("models.subtitle")}</h2>
 
             {/* Weight Summary */}
             <div className="space-y-2">
               <div className="text-lg">
-                <span className="font-medium">All weight: </span>
+                <span className="font-medium">{t("models.allWeight")}: </span>
                 <span className="font-bold">{totalWeight.toFixed(2)}</span>
               </div>
               <div className="text-lg">
-                <span className="font-medium">All plus: </span>
+                <span className="font-medium">{t("models.allPlus")}: </span>
                 <span className="font-bold">{totalMasterWeight.toFixed(2)}</span>
               </div>
             </div>
@@ -99,7 +102,7 @@ export default function JewelryModelsPage() {
             <div className="flex items-center justify-center gap-4 max-w-md mx-auto">
               <div className="relative flex-1">
                 <Input
-                  placeholder="code..."
+                  placeholder={t("models.codePlaceholder")}
                   value={searchCode}
                   onChange={(e) => setSearchCode(e.target.value)}
                   className="text-center"
@@ -110,7 +113,7 @@ export default function JewelryModelsPage() {
             <div className="flex items-center justify-center gap-4">
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-blue-600 hover:bg-blue-700">Model qo'shish</Button>
+                  <Button className="bg-blue-600 hover:bg-blue-700">{t("models.addModel")}</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[400px]">
                   <DialogHeader>

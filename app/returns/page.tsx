@@ -34,10 +34,13 @@ import { Search, Plus, RotateCcw, CheckCircle, XCircle, Clock, DollarSign, Filte
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAppStore, type ReturnItem } from "@/lib/store"
 import { useToast } from "@/components/toast-provider"
+// Add useI18n hook and translate all returns page content
+import { useI18n } from "@/lib/i18n"
 
 export default function ReturnsPage() {
   const { state, dispatch } = useAppStore()
   const { addToast } = useToast()
+  const { t } = useI18n()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -269,14 +272,16 @@ export default function ReturnsPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Returns Management</h1>
-              <p className="text-muted-foreground">Process and track product returns and exchanges</p>
+              {/* Update page header */}
+              <h1 className="text-3xl font-bold tracking-tight">{t("returns.title")}</h1>
+              <p className="text-muted-foreground">{t("returns.subtitle")}</p>
             </div>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
+                {/* Update all buttons, labels, and content */}
                 <Button onClick={resetForm}>
                   <Plus className="h-4 w-4 mr-2" />
-                  New Return
+                  {t("returns.newReturn")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px]">
@@ -425,9 +430,10 @@ export default function ReturnsPage() {
           <div className="grid gap-4 md:grid-cols-4 mt-6">
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader className="pb-2">
+                {/* Update card titles */}
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
                   <RotateCcw className="h-4 w-4" />
-                  Total Returns
+                  {t("returns.totalReturns")}
                 </CardTitle>
               </CardHeader>
               <CardContent>

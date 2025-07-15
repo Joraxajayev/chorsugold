@@ -21,6 +21,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Search, Plus, Clock, CheckCircle, AlertCircle, User } from "lucide-react"
 import { useAppStore, type Order } from "@/lib/store"
 import { useToast } from "@/components/toast-provider"
+// Add useI18n hook and translate all orders page content
+import { useI18n } from "@/lib/i18n"
 
 const craftsmen = [
   { id: 1, name: "John Smith", specialty: "Diamond Setting" },
@@ -32,6 +34,7 @@ const craftsmen = [
 export default function OrdersPage() {
   const { state, dispatch } = useAppStore()
   const { addToast } = useToast()
+  const { t } = useI18n()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -267,10 +270,10 @@ export default function OrdersPage() {
 
   return (
     <SidebarProvider>
-      
         <AppSidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <TopNav pageTitle="Orders & Project Management" />
+          {/* Update page title and all content with translations */}
+          <TopNav pageTitle={t("orders.title")} />
           <main className="flex-1 overflow-auto px-4 py-4">
             {" "}
             {/* Changed p-4 to px-4 py-4 */}
@@ -278,7 +281,8 @@ export default function OrdersPage() {
             <div className="grid gap-4 md:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+                  {/* Update all card titles, buttons, and form elements */}
+                  <CardTitle className="text-sm font-medium">{t("orders.totalOrders")}</CardTitle>
                   <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -289,7 +293,7 @@ export default function OrdersPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("orders.inProgress")}</CardTitle>
                   <AlertCircle className="h-4 w-4 text-blue-500" />
                 </CardHeader>
                 <CardContent>
@@ -300,7 +304,7 @@ export default function OrdersPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Completed</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("orders.completed")}</CardTitle>
                   <CheckCircle className="h-4 w-4 text-green-500" />
                 </CardHeader>
                 <CardContent>
@@ -311,7 +315,7 @@ export default function OrdersPage() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t("orders.totalValue")}</CardTitle>
                   <User className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -351,7 +355,7 @@ export default function OrdersPage() {
                 <DialogTrigger asChild>
                   <Button onClick={resetForm}>
                     <Plus className="h-4 w-4 mr-2" />
-                    New Order
+                    {t("orders.newOrder")}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[600px]">
@@ -460,7 +464,6 @@ export default function OrdersPage() {
             </div>
           </main>
         </div>
-      
     </SidebarProvider>
   )
 }

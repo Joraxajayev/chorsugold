@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Bell, Moon, Sun, User, LogOut, Settings, TrendingUp } from "lucide-react"
+import { Search, Moon, Sun, User, LogOut, Settings, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -12,12 +12,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAppStore } from "@/lib/store"
 import { useToast } from "@/components/toast-provider"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { useI18n } from "@/lib/i18n"
+
+const STORAGE_KEYS = {
+  gold: "jewelryApp.goldPrice",
+  usd: "jewelryApp.usdRate",
+}
 
 interface TopNavProps {
   pageTitle: string
@@ -26,10 +32,30 @@ interface TopNavProps {
 export function TopNav({ pageTitle }: TopNavProps) {
   const { state, dispatch } = useAppStore()
   const { addToast } = useToast()
+  const { t } = useI18n()
+
+  // 1) Initializing from localStorage (if available)
+  const [goldPrice, setGoldPrice] = useState<number>(() => {
+    if (typeof window === "undefined") return 1950
+    const stored = localStorage.getItem(STORAGE_KEYS.gold)
+    return stored !== null ? parseFloat(stored) : 1950
+  })
+  const [usdRate, setUsdRate] = useState<number>(() => {
+    if (typeof window === "undefined") return 12700
+    const stored = localStorage.getItem(STORAGE_KEYS.usd)
+    return stored !== null ? parseInt(stored, 10) : 12700
+  })
+
+  // 2) Sync to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.gold, String(goldPrice))
+  }, [goldPrice])
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.usd, String(usdRate))
+  }, [usdRate])
+
   const [searchQuery, setSearchQuery] = useState("")
-
-  const unreadNotifications = state.notifications.filter((n) => !n.read)
-
   const toggleDarkMode = () => {
     dispatch({ type: "TOGGLE_DARK_MODE" })
     document.documentElement.classList.toggle("dark")
@@ -45,40 +71,14 @@ export function TopNav({ pageTitle }: TopNavProps) {
     dispatch({ type: "SET_SEARCH_QUERY", payload: query })
   }
 
-  const markNotificationAsRead = (notificationId: number) => {
-    dispatch({ type: "MARK_NOTIFICATION_READ", payload: notificationId })
-  }
-
-  const clearAllNotifications = () => {
-    dispatch({ type: "CLEAR_NOTIFICATIONS" })
-    addToast({
-      type: "success",
-      title: "All notifications cleared",
-      duration: 2000,
-    })
-  }
-
-  const getTimeAgo = (timestamp: string) => {
-    const now = new Date()
-    const time = new Date(timestamp)
-    const diffInMinutes = Math.floor((now.getTime() - time.getTime()) / (1000 * 60))
-
-    if (diffInMinutes < 1) return "Just now"
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
-    return `${Math.floor(diffInMinutes / 1440)}d ago`
-  }
-
-  // Global search shortcut
+  // Navigate to search on "/" key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "/" && !e.ctrlKey && !e.metaKey) {
         e.preventDefault()
-        const searchInput = document.getElementById("global-search")
-        searchInput?.focus()
+        document.getElementById("global-search")?.focus()
       }
     }
-
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
   }, [])
@@ -86,115 +86,65 @@ export function TopNav({ pageTitle }: TopNavProps) {
   return (
     <header className="sticky top-0 z-50 w-full glass-effect shadow-lg shadow-black/5">
       <div className="container flex h-16 items-center justify-between px-6">
-        {/* Left Section: Sidebar Trigger & Page Title */}
+        {/* Sidebar & Title */}
         <div className="flex items-center gap-2">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          <h1 className="text-lg font-semibold">{pageTitle}</h1>
         </div>
 
-        {/* Global Search and Market Prices */}
+        {/* Search & Market */}
         <div className="flex-1 flex items-center justify-center gap-8">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="global-search"
-              placeholder="Search customers, orders, products... (Press / to focus)"
+              placeholder={t("common.search") + " customers, orders, products... (Press /)"}
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-12 pr-4 h-11 bg-white/50 dark:bg-slate-800/50 border-0 shadow-inner rounded-xl focus:bg-white dark:focus:bg-slate-800 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+              className="pl-12 pr-4 h-11 bg-white/50 dark:bg-slate-800/50 border-0 shadow-inner rounded-xl focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
 
           {/* Market Prices */}
           <div className="hidden md:flex items-center gap-6 text-sm">
+            {/* Gold */}
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20 border border-amber-200/50 dark:border-amber-800/50">
               <TrendingUp className="h-4 w-4 text-amber-600" />
               <span className="font-medium text-muted-foreground">Gold:</span>
-              <span className="font-bold text-amber-600">$1,950/oz</span>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={goldPrice}
+                onChange={(e) => setGoldPrice(parseFloat(e.target.value) || 0)}
+                className="w-20 bg-transparent border-none focus:ring-0 font-bold text-amber-600 text-right"
+              />
+              <span className="font-medium text-amber-600">$/oz</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-950/20 dark:to-slate-950/20 border border-gray-200/50 dark:border-gray-800/50">
-              <span className="font-medium text-muted-foreground">Silver:</span>
-              <span className="font-bold text-gray-600">$24.50/oz</span>
-            </div>
+
+            {/* USD Rate */}
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200/50 dark:border-blue-800/50">
               <span className="font-medium text-muted-foreground">USD Rate:</span>
-              <span className="font-bold text-blue-600">12,700 UZS</span>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={usdRate}
+                onChange={(e) => setUsdRate(parseInt(e.target.value, 10) || 0)}
+                className="w-24 bg-transparent border-none focus:ring-0 font-bold text-blue-600 text-right"
+              />
+              <span className="font-medium text-blue-600">UZS</span>
             </div>
           </div>
         </div>
 
-        {/* Right Side Actions */}
+        {/* Right Actions */}
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleDarkMode}
-            className="h-10 w-10 rounded-xl hover:bg-accent transition-all duration-300"
-          >
+          <LanguageSwitcher />
+          <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="h-10 w-10 rounded-xl hover:bg-accent transition">
             {state.isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
 
-          {/* Notifications */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 rounded-xl hover:bg-accent transition-all duration-300 relative"
-              >
-                <Bell className="h-4 w-4" />
-                {unreadNotifications.length > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-gradient-to-r from-red-500 to-pink-500 animate-pulse-slow">
-                    {unreadNotifications.length}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <div className="flex items-center justify-between p-2">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                {state.notifications.length > 0 && (
-                  <Button variant="ghost" size="sm" onClick={clearAllNotifications}>
-                    Clear all
-                  </Button>
-                )}
-              </div>
-              <DropdownMenuSeparator />
-              <div className="max-h-96 overflow-y-auto">
-                {state.notifications.length === 0 ? (
-                  <div className="p-4 text-center text-muted-foreground">No notifications</div>
-                ) : (
-                  state.notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`flex items-start gap-3 p-3 hover:bg-muted cursor-pointer ${
-                        !notification.read ? "bg-muted/50" : ""
-                      }`}
-                      onClick={() => markNotificationAsRead(notification.id)}
-                    >
-                      <div
-                        className={`h-2 w-2 rounded-full mt-2 ${
-                          notification.priority === "high"
-                            ? "bg-red-500"
-                            : notification.priority === "medium"
-                              ? "bg-yellow-500"
-                              : "bg-blue-500"
-                        }`}
-                      ></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{notification.title}</p>
-                        <p className="text-xs text-muted-foreground">{notification.message}</p>
-                        <p className="text-xs text-muted-foreground">{getTimeAgo(notification.timestamp)}</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">

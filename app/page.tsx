@@ -21,9 +21,13 @@ import {
 import { useAppStore } from "@/lib/store"
 import { useToast } from "@/components/toast-provider"
 
+// Add useI18n hook and translate dashboard content
+import { useI18n } from "@/lib/i18n"
+
 export default function Dashboard() {
   const { state, dispatch } = useAppStore()
   const { addToast } = useToast()
+  const { t } = useI18n()
 
   // Calculate dashboard metrics
   const metrics = useMemo(() => {
@@ -156,11 +160,10 @@ export default function Dashboard() {
         <main className="flex-1 overflow-auto px-6 py-8 space-y-8">
           {/* Welcome Section */}
           <div className="flex items-center justify-between">
+            {/* Update the welcome section */}
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-              <p className="text-muted-foreground">
-                Welcome back! Here's what's happening with your jewelry business today.
-              </p>
+              <h1 className="text-3xl font-bold tracking-tight">{t("dashboard.title")}</h1>
+              <p className="text-muted-foreground">{t("dashboard.welcome")}</p>
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Today</p>
@@ -171,23 +174,30 @@ export default function Dashboard() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Total Customers</CardTitle>
+                {/* Update all card titles and content */}
+                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                  {t("dashboard.totalCustomers")}
+                </CardTitle>
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <Users className="h-5 w-5 text-white" />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-foreground">{metrics.totalCustomers}</div>
+              <div className="text-3xl font-bold text-foreground">
+  790.19 <span className="text-base text-muted-foreground">gr</span>
+</div>
                 <div className="flex items-center text-sm text-muted-foreground mt-2">
                   <ArrowUpRight className="h-4 w-4 text-green-500 mr-1" />
                   <span className="text-green-600 font-medium">+12%</span>
-                  <span className="ml-1">from last month</span>
                 </div>
               </CardContent>
             </Card>
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Active Orders</CardTitle>
+                {/* Update all card titles and content */}
+                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                  {t("dashboard.activeOrders")}
+                </CardTitle>
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <ShoppingCart className="h-5 w-5 text-white" />
                 </div>
@@ -202,7 +212,10 @@ export default function Dashboard() {
             </Card>
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Inventory Value</CardTitle>
+                {/* Update all card titles and content */}
+                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                  {t("dashboard.inventoryValue")}
+                </CardTitle>
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <Package className="h-5 w-5 text-white" />
                 </div>
@@ -226,7 +239,10 @@ export default function Dashboard() {
             </Card>
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">Total Revenue</CardTitle>
+                {/* Update all card titles and content */}
+                <CardTitle className="text-sm font-semibold text-muted-foreground">
+                  {t("dashboard.totalRevenue")}
+                </CardTitle>
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <DollarSign className="h-5 w-5 text-white" />
                 </div>
@@ -246,7 +262,8 @@ export default function Dashboard() {
             {/* Orders Chart Placeholder */}
             <Card className="lg:col-span-2 card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader className="pb-4">
-                <CardTitle className="text-xl font-bold">Orders Overview</CardTitle>
+                {/* Update chart and activity section titles */}
+                <CardTitle className="text-xl font-bold">{t("dashboard.ordersOverview")}</CardTitle>
                 <CardDescription className="text-muted-foreground">Order trends over the last 30 days</CardDescription>
               </CardHeader>
               <CardContent>
@@ -274,7 +291,8 @@ export default function Dashboard() {
             {/* Recent Activity */}
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+                {/* Update chart and activity section titles */}
+                <CardTitle>{t("dashboard.recentActivity")}</CardTitle>
                 <CardDescription>Latest updates from your business</CardDescription>
               </CardHeader>
               <CardContent>
@@ -300,7 +318,8 @@ export default function Dashboard() {
             {/* Inventory Composition */}
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader>
-                <CardTitle>Inventory Composition</CardTitle>
+                {/* Update chart and activity section titles */}
+                <CardTitle>{t("dashboard.inventoryComposition")}</CardTitle>
                 <CardDescription>Breakdown of inventory by material type</CardDescription>
               </CardHeader>
               <CardContent>
@@ -327,7 +346,8 @@ export default function Dashboard() {
             {/* Quick Actions & Alerts */}
             <Card className="card-hover border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
               <CardHeader>
-                <CardTitle>Quick Actions & Alerts</CardTitle>
+                {/* Update chart and activity section titles */}
+                <CardTitle>{t("dashboard.quickActions")}</CardTitle>
                 <CardDescription>Important tasks and notifications</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
